@@ -1913,8 +1913,16 @@
             }, 8000);
         }
 
-        // Formspree configuration for file uploads
+        // FormSubmit configuration - FREE file uploads with secure endpoint
+        const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/a8e87fdfb85139340dab869a3c6a1aa3';
+        
+        // Formspree configuration (backup)
         const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mandryya';
+        
+        // Web3Forms configuration (backup - free tier only supports text)
+        const WEB3FORMS_ACCESS_KEY = '600df657-23a1-4a20-9259-e4dd31d45a69';
+        const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+        
         
         // Global timer variables
         let practiceTimer = null;
@@ -2116,7 +2124,7 @@
             progressNotification.innerHTML = `
                 <div class="flex items-center space-x-2">
                     <div class="animate-spin rounded-full h-5 w-5 border-2 border-bb-dark border-t-transparent"></div>
-                    <span>UPLOADING FILE...</span>
+                    <span>UPLOADING FILE VIA FORMSUBMIT...</span>
                 </div>
             `;
             document.body.appendChild(progressNotification);
@@ -2126,8 +2134,15 @@
             const now = new Date();
             const timeRemainingFormatted = formatTimeRemaining();
             
-            // Create FormData for Formspree submission
+            // Create FormData for FormSubmit (FREE file uploads!)
             const formData = new FormData();
+            
+            // FormSubmit configuration
+            formData.append('_subject', `🧪 Chemistry Assignment - ${student.name}`);
+            formData.append('_captcha', 'false'); // Disable captcha for smoother UX
+            formData.append('_template', 'table'); // Nice email template
+            
+            // Student and submission details
             formData.append('student_name', student.name);
             formData.append('student_username', currentStudent);
             formData.append('submit_time', now.toLocaleString());
@@ -2135,30 +2150,62 @@
             formData.append('time_remaining', timeRemainingFormatted);
             formData.append('file_name', file.name);
             formData.append('file_size', (file.size / 1024 / 1024).toFixed(2) + ' MB');
-            formData.append('assignment_file', file); // The actual file
-            formData.append('_subject', `Chemistry Assignment Submission - ${student.name}`);
+            formData.append('file_type', file.type || 'Unknown');
             
-            // Send to Formspree
-            fetch(FORMSPREE_ENDPOINT, {
+            // Add detailed message
+            const message = `Chemistry assignment submitted by ${student.name}
+
+📋 Student Information:
+• Username: ${currentStudent}
+• Full Name: ${student.name}
+• Submit Time: ${now.toLocaleString()}
+• Time Remaining: ${timeRemainingFormatted}
+• Download Time: ${student.downloadedAt ? new Date(student.downloadedAt).toLocaleString() : 'N/A'}
+
+📎 File Details:
+• File Name: ${file.name}
+• File Size: ${(file.size / 1024 / 1024).toFixed(2)} MB
+• File Type: ${file.type || 'Unknown'}
+
+🎯 The student's assignment file is attached to this email.`;
+
+            formData.append('message', message);
+            formData.append('attachment', file); // The actual file - FREE on FormSubmit!
+            
+            console.log('Uploading file via FormSubmit:');
+            console.log('- Endpoint:', FORMSUBMIT_ENDPOINT);
+            console.log('- File name:', file.name);
+            console.log('- File size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+            console.log('- File type:', file.type);
+            
+            // Send to FormSubmit
+            fetch(FORMSUBMIT_ENDPOINT, {
                 method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response URL:', response.url);
+                
+                // FormSubmit typically redirects on success (status 200 or redirect)
+                if (response.status === 200 || response.status === 302 || response.ok) {
+                    return { success: true, status: response.status };
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
             })
-            .then(response => response.json())
             .then(data => {
-                // Remove progress notification
+                console.log('Upload response:', data);
                 progressNotification.remove();
                 
-                if (data.ok) {
+                if (data.success) {
                     // Success! File uploaded and email sent
                     const submission = {
                         fileName: file.name,
                         fileSize: file.size,
                         submitTime: now.toISOString(),
-                        status: 'Emailed to Teacher',
-                        formspreeId: data.id || 'success'
+                        status: 'File Emailed via FormSubmit',
+                        formsubmitStatus: 'success'
                     };
 
                     student.submissions.push(submission);
@@ -2196,33 +2243,41 @@
                     // Update timer display
                     const timerStatus = document.getElementById('timer-status');
                     if (timerStatus) {
-                        timerStatus.textContent = 'Assignment submitted and emailed to teacher';
+                        timerStatus.textContent = 'Assignment file sent via FormSubmit';
                     }
                     
                 } else {
-                    throw new Error(data.error || 'Upload failed');
+                    throw new Error('Upload failed - FormSubmit did not return success status');
                 }
             })
             .catch(error => {
-                console.error('Upload error:', error);
+                console.error('Upload error details:', error);
                 progressNotification.remove();
                 
-                // Show error notification
+                // Show detailed error notification
+                const errorMessage = error.message.includes('Failed to fetch') ? 
+                    'Connection failed - Check internet connection' : 
+                    error.message;
+                
                 const errorNotification = document.createElement('div');
-                errorNotification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+                errorNotification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold max-w-md';
                 errorNotification.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-start space-x-2">
+                        <svg class="w-5 h-5 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
-                        <span>UPLOAD FAILED - Please try again</span>
+                        <div>
+                            <div class="font-bold">UPLOAD FAILED</div>
+                            <div class="text-sm opacity-90 mt-1">${errorMessage}</div>
+                            <div class="text-xs opacity-75 mt-1">Try again in a few seconds</div>
+                        </div>
                     </div>
                 `;
                 document.body.appendChild(errorNotification);
                 
                 setTimeout(() => {
                     errorNotification.remove();
-                }, 5000);
+                }, 8000);
             });
         }
 
