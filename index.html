@@ -300,7 +300,7 @@
                     <div>
                         <h3 class="text-lg font-semibold mb-4 text-bb-green terminal-text">SCHOOL RESOURCES</h3>
                         <ul class="space-y-2 text-gray-400">
-                            <li><a href="https://jonasraschidie.github.io" target="_blank" rel="noopener noreferrer" class="hover:text-bb-green transition-colors">Rashidi Personal Portal</a></li>
+                            <li><a href="https://rashidi-chem.github.io" target="_blank" rel="noopener noreferrer" class="hover:text-bb-green transition-colors">Rashidi Personal Portal</a></li>
                             <li><button onclick="checkLoginAndNavigate('downloads')" class="hover:text-bb-green transition-colors">Student Database</button></li>
                             <li><a href="https://oercommons.org/hubs/NSDL" target="_blank" rel="noopener noreferrer" class="hover:text-bb-green transition-colors">Digital Library</a></li>
                         </ul>
@@ -1177,7 +1177,7 @@
             const githubFilename = bookMappings[filename] || filename;
             
             // Create download link to GitHub repository
-            const githubBaseUrl = 'https://raw.githubusercontent.com/jonasraschidie/jonasraschidie.github.io/main/';
+            const githubBaseUrl = 'https://rashidi-chem.github.io/';
             const downloadUrl = githubBaseUrl + githubFilename;
             
             // Create and trigger download
@@ -1277,6 +1277,42 @@
                 downloadedAt: null
             }
         };
+
+        // Persistent student database functions
+        function loadStudentDatabase() {
+            try {
+                const saved = localStorage.getItem('chemClass_studentDatabase');
+                if (saved) {
+                    const savedDB = JSON.parse(saved);
+                    // Merge saved data with default database structure
+                    Object.keys(studentDatabase).forEach(username => {
+                        if (savedDB[username]) {
+                            // Preserve timer data and submissions from saved database
+                            studentDatabase[username].timerStartTime = savedDB[username].timerStartTime;
+                            studentDatabase[username].timerEndTime = savedDB[username].timerEndTime;
+                            studentDatabase[username].downloadedAt = savedDB[username].downloadedAt;
+                            studentDatabase[username].canUpload = savedDB[username].canUpload;
+                            studentDatabase[username].submissions = savedDB[username].submissions || [];
+                        }
+                    });
+                    console.log('Student database loaded from localStorage');
+                }
+            } catch (error) {
+                console.warn('Failed to load student database:', error);
+            }
+        }
+
+        function saveStudentDatabase() {
+            try {
+                localStorage.setItem('chemClass_studentDatabase', JSON.stringify(studentDatabase));
+                console.log('Student database saved to localStorage');
+            } catch (error) {
+                console.warn('Failed to save student database:', error);
+            }
+        }
+
+        // Load saved data on page load
+        loadStudentDatabase();
 
         // Separate authentication function for AI page
         function authenticateAI(username, password) {
@@ -1614,6 +1650,9 @@
             }
             
             console.log('Student portal setup complete');
+            
+            // Initialize timer system for this student
+            initializePracticeTimer();
         }
 
         function downloadStudentAssignment(filename) {
@@ -1623,8 +1662,8 @@
             }
             
             // Construct the GitHub URL for the student's practice file
-            const githubBaseUrl = 'https://jonasraschidie.github.io';
-            const fileUrl = `${githubBaseUrl}/${filename}`;
+            const githubBaseUrl = 'https://rashidi-chem.github.io/';
+            const fileUrl = `${githubBaseUrl}${filename}`;
             
             console.log('Downloading student practice file:', fileUrl);
             
@@ -1822,12 +1861,12 @@
                     
                     <div class="space-y-2">
                         ${hasSubmitted ? `
-                            <button onclick="downloadStudentFile('${username}')" class="w-full bg-red-600 text-white px-4 py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors">
-                                DOWNLOAD SUBMITTED FILE
+                            <button onclick="downloadStudentFile('${username}')" class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors">
+                                VIEW EMAIL DETAILS
                             </button>
                         ` : `
                             <div class="w-full bg-bb-gray text-gray-400 px-4 py-3 rounded-lg text-sm text-center">
-                                NO FILE TO DOWNLOAD
+                                NO SUBMISSION YET
                             </div>
                         `}
                     </div>
@@ -1847,23 +1886,36 @@
             // Get the most recent submission
             const latestSubmission = student.submissions[student.submissions.length - 1];
             
-            // Create a mock download for the submitted file
-            // In a real implementation, this would download the actual file from the server
-            const blob = new Blob([`Student: ${student.name}\nFile: ${latestSubmission.fileName}\nSubmitted: ${latestSubmission.submitTime}\nStatus: ${latestSubmission.status}\n\nNote: This is a mock download. In a real system, the actual submitted file would be downloaded.`], 
-                                 { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
+            // Show information about the emailed file
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 font-bold max-w-md';
+            notification.innerHTML = `
+                <div class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                    </svg>
+                    <div>
+                        <div class="font-bold">FILE EMAILED TO YOU</div>
+                        <div class="text-sm opacity-90 mt-1">
+                            Student: ${student.name}<br>
+                            File: ${latestSubmission.fileName}<br>
+                            Status: ${latestSubmission.status}<br>
+                            Check your email inbox for the attachment.
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
             
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${username}_${latestSubmission.fileName}`;
-            link.click();
-            
-            URL.revokeObjectURL(url);
-            
-            // Show download notification
-            showDownloadNotification(`Downloaded ${student.name}'s submitted file: ${latestSubmission.fileName}`);
+            setTimeout(() => {
+                notification.remove();
+            }, 8000);
         }
 
+        // Formspree configuration for file uploads
+        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mandryya';
+        
         // Global timer variables
         let practiceTimer = null;
         let timeRemaining = 3600; // 1 hour in seconds
@@ -1883,12 +1935,12 @@
             student.downloadedAt = now.toISOString();
             student.canUpload = true;
             
-            // Reset timer
-            timeRemaining = 3600;
+            // Save to persistent storage
+            saveStudentDatabase();
             
             // Start the practice file download from GitHub
             const fileName = student.assignment;
-            const githubUrl = `https://jonasraschidie.github.io/${fileName}`;
+            const githubUrl = `https://rashidi-chem.github.io/${fileName}`;
             
             // Create download link
             const link = document.createElement('a');
@@ -1896,8 +1948,8 @@
             link.download = fileName;
             link.click();
             
-            // Start the timer
-            startPracticeTimer();
+            // Start the timer with persistent state
+            initializePracticeTimer();
             
             // Update UI
             updateDownloadButton();
@@ -1907,29 +1959,71 @@
             showDownloadNotification(`Practice file ${fileName} downloaded! Timer started.`);
         }
 
+        function initializePracticeTimer() {
+            if (!currentStudent) return;
+            
+            const student = studentDatabase[currentStudent];
+            
+            // Check if timer should be running
+            if (student.timerStartTime && student.timerEndTime) {
+                const now = new Date();
+                const endTime = new Date(student.timerEndTime);
+                const remaining = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+                
+                if (remaining > 0) {
+                    // Timer is still active, restore it
+                    timeRemaining = remaining;
+                    student.canUpload = true;
+                    startPracticeTimer();
+                    console.log(`Timer restored: ${remaining} seconds remaining`);
+                } else {
+                    // Timer has expired
+                    timeRemaining = 0;
+                    student.canUpload = false;
+                    console.log('Timer expired');
+                }
+            }
+            
+            updateTimerDisplay();
+            updateUploadButton();
+        }
+
         function startPracticeTimer() {
+            // Clear any existing timer
+            if (practiceTimer) {
+                clearInterval(practiceTimer);
+            }
+            
             const timerDisplay = document.getElementById('timer-display');
             const timerStatus = document.getElementById('timer-status');
             
-            timerStatus.textContent = 'Practice in progress - Upload available';
+            if (timerStatus) {
+                timerStatus.textContent = 'Practice in progress - Upload available';
+            }
             
             practiceTimer = setInterval(() => {
-                timeRemaining--;
-                
-                const hours = Math.floor(timeRemaining / 3600);
-                const minutes = Math.floor((timeRemaining % 3600) / 60);
-                const seconds = timeRemaining % 60;
-                
-                timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeRemaining <= 0) {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    
+                    // Update student's canUpload status and save periodically (every 30 seconds)
+                    if (currentStudent && timeRemaining % 30 === 0) {
+                        studentDatabase[currentStudent].canUpload = timeRemaining > 0;
+                        saveStudentDatabase();
+                    }
+                } else {
+                    // Timer expired
                     clearInterval(practiceTimer);
-                    timerDisplay.textContent = '00:00:00';
-                    timerStatus.textContent = 'Time expired - Upload disabled';
+                    updateTimerDisplay();
+                    
+                    if (timerStatus) {
+                        timerStatus.textContent = 'Time expired - Upload disabled';
+                    }
                     
                     // Disable upload for current student
                     if (currentStudent) {
                         studentDatabase[currentStudent].canUpload = false;
+                        saveStudentDatabase();
                     }
                     
                     updateUploadButton();
@@ -1952,6 +2046,17 @@
                     }, 5000);
                 }
             }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) {
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+                
+                timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
         }
 
         function updateDownloadButton() {
@@ -2004,47 +2109,128 @@
                 alert('Upload not available. Please download practice file first or time may have expired.');
                 return;
             }
-            
-            // Add submission to student record
-            const student = studentDatabase[currentStudent];
-            const submission = {
-                fileName: file.name,
-                fileSize: file.size,
-                submitTime: new Date().toISOString(),
-                status: 'Submitted'
-            };
-            
-            student.submissions.push(submission);
-            
-            // Disable further uploads
-            student.canUpload = false;
-            updateUploadButton();
-            
-            // Stop timer
-            if (practiceTimer) {
-                clearInterval(practiceTimer);
-            }
-            
-            // Show success notification
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
-            notification.innerHTML = `
+
+            // Show upload progress notification
+            const progressNotification = document.createElement('div');
+            progressNotification.className = 'fixed top-4 right-4 bg-bb-yellow text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+            progressNotification.innerHTML = `
                 <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>FILE UPLOADED SUCCESSFULLY</span>
+                    <div class="animate-spin rounded-full h-5 w-5 border-2 border-bb-dark border-t-transparent"></div>
+                    <span>UPLOADING FILE...</span>
                 </div>
             `;
-            document.body.appendChild(notification);
+            document.body.appendChild(progressNotification);
+
+            // Prepare student data
+            const student = studentDatabase[currentStudent];
+            const now = new Date();
+            const timeRemainingFormatted = formatTimeRemaining();
             
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
+            // Create FormData for Formspree submission
+            const formData = new FormData();
+            formData.append('student_name', student.name);
+            formData.append('student_username', currentStudent);
+            formData.append('submit_time', now.toLocaleString());
+            formData.append('download_time', student.downloadedAt ? new Date(student.downloadedAt).toLocaleString() : 'N/A');
+            formData.append('time_remaining', timeRemainingFormatted);
+            formData.append('file_name', file.name);
+            formData.append('file_size', (file.size / 1024 / 1024).toFixed(2) + ' MB');
+            formData.append('assignment_file', file); // The actual file
+            formData.append('_subject', `Chemistry Assignment Submission - ${student.name}`);
             
-            // Update timer display
-            const timerStatus = document.getElementById('timer-status');
-            timerStatus.textContent = 'Practice completed - File submitted';
+            // Send to Formspree
+            fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove progress notification
+                progressNotification.remove();
+                
+                if (data.ok) {
+                    // Success! File uploaded and email sent
+                    const submission = {
+                        fileName: file.name,
+                        fileSize: file.size,
+                        submitTime: now.toISOString(),
+                        status: 'Emailed to Teacher',
+                        formspreeId: data.id || 'success'
+                    };
+
+                    student.submissions.push(submission);
+                    
+                    // Disable further uploads
+                    student.canUpload = false;
+                    
+                    // Save to persistent storage
+                    saveStudentDatabase();
+                    
+                    updateUploadButton();
+                    
+                    // Stop timer
+                    if (practiceTimer) {
+                        clearInterval(practiceTimer);
+                    }
+
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+                    notification.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>FILE EMAILED TO TEACHER SUCCESSFULLY!</span>
+                        </div>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 5000);
+
+                    // Update timer display
+                    const timerStatus = document.getElementById('timer-status');
+                    if (timerStatus) {
+                        timerStatus.textContent = 'Assignment submitted and emailed to teacher';
+                    }
+                    
+                } else {
+                    throw new Error(data.error || 'Upload failed');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                progressNotification.remove();
+                
+                // Show error notification
+                const errorNotification = document.createElement('div');
+                errorNotification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+                errorNotification.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>UPLOAD FAILED - Please try again</span>
+                    </div>
+                `;
+                document.body.appendChild(errorNotification);
+                
+                setTimeout(() => {
+                    errorNotification.remove();
+                }, 5000);
+            });
+        }
+
+        function formatTimeRemaining() {
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
         function setupStudentPortal() {
