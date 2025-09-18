@@ -110,6 +110,8 @@
                 <div class="hidden md:flex space-x-8">
                     <button onclick="showPage('home')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">HOME</button>
                     <button onclick="checkLoginAndNavigate('ai')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">AI ASSISTANT</button>
+                    <button onclick="checkLoginAndNavigate('student-portal')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">STUDENT PORTAL</button>
+                    <button onclick="checkLoginAndNavigate('top-secret')" class="nav-link text-gray-300 hover:text-red-400 px-3 py-2 text-sm font-medium transition-colors terminal-text">TOP SECRET</button>
                     <button onclick="checkLoginAndNavigate('downloads')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">DOWNLOADS</button>
                     <button id="logout-btn" onclick="logoutAll()" class="nav-link text-red-400 hover:text-red-300 px-3 py-2 text-sm font-medium transition-colors terminal-text hidden">LOGOUT</button>
                 </div>
@@ -125,6 +127,8 @@
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <button onclick="showPage('home'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">HOME</button>
                 <button onclick="checkLoginAndNavigate('ai'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">AI ASSISTANT</button>
+                <button onclick="checkLoginAndNavigate('student-portal'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">STUDENT PORTAL</button>
+                <button onclick="checkLoginAndNavigate('top-secret'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-red-400 w-full text-left terminal-text">TOP SECRET</button>
                 <button onclick="checkLoginAndNavigate('downloads'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">DOWNLOADS</button>
                 <button id="mobile-logout-btn" onclick="logoutAll(); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-red-400 hover:text-red-300 w-full text-left terminal-text hidden">LOGOUT</button>
             </div>
@@ -288,6 +292,8 @@
                         <ul class="space-y-2 text-gray-400">
                             <li><button onclick="showPage('home')" class="hover:text-bb-green transition-colors terminal-text">HOME</button></li>
                             <li><button onclick="checkLoginAndNavigate('ai')" class="hover:text-bb-green transition-colors terminal-text">AI ASSISTANT</button></li>
+                            <li><button onclick="checkLoginAndNavigate('student-portal')" class="hover:text-bb-green transition-colors terminal-text">STUDENT PORTAL</button></li>
+                            <li><button onclick="checkLoginAndNavigate('top-secret')" class="hover:text-red-400 transition-colors terminal-text">TOP SECRET</button></li>
                             <li><button onclick="checkLoginAndNavigate('downloads')" class="hover:text-bb-green transition-colors terminal-text">DOWNLOADS</button></li>
                         </ul>
                     </div>
@@ -462,6 +468,112 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Portal Page -->
+    <div id="student-portal-page" class="page hidden">
+        <div class="min-h-screen bg-bb-dark py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <div class="mx-auto h-24 w-24 bg-bb-green rounded-full flex items-center justify-center glow-green mb-6">
+                        <span class="text-bb-dark font-bold text-3xl">SP</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-bb-green mb-4 terminal-text glow-text">STUDENT PORTAL</h1>
+                    <p class="text-lg text-gray-400 max-w-3xl mx-auto">Your centralized hub for chemistry education resources, assignments, and academic progress.</p>
+                </div>
+
+                <!-- Simple Practice Section -->
+                <div class="max-w-4xl mx-auto">
+                    <!-- Timer Display -->
+                    <div id="timer-section" class="mb-8 text-center">
+                        <div class="bg-bb-light rounded-xl border border-bb-green p-6 glow-green">
+                            <div class="mx-auto h-20 w-20 bg-bb-yellow rounded-full flex items-center justify-center glow-yellow mb-4">
+                                <svg class="w-10 h-10 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-bb-yellow mb-2 terminal-text">PRACTICE TIMER</h3>
+                            <div id="timer-display" class="text-4xl font-bold text-bb-green terminal-text mb-2">--:--:--</div>
+                            <p id="timer-status" class="text-gray-400">Timer not started</p>
+                        </div>
+                    </div>
+
+                    <!-- Download/Upload Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Download Card -->
+                        <div class="bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                            <div class="p-8 text-center">
+                                <div class="mx-auto h-16 w-16 bg-bb-green rounded-full flex items-center justify-center glow-green mb-4">
+                                    <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-bb-green mb-3 terminal-text">DOWNLOAD PRACTICE</h3>
+                                <p class="text-gray-400 text-sm mb-6">Download your personalized practice assignment and start the timer</p>
+                                <button id="download-btn" onclick="downloadPracticeFile()" 
+                                        class="bg-bb-green text-bb-dark px-6 py-3 rounded-lg text-sm font-bold hover:bg-green-400 transition-colors glow-green w-full">
+                                    START PRACTICE
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Upload Card -->
+                        <div class="bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                            <div class="p-8 text-center">
+                                <div class="mx-auto h-16 w-16 bg-bb-yellow rounded-full flex items-center justify-center glow-yellow mb-4">
+                                    <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-bb-yellow mb-3 terminal-text">UPLOAD SOLUTION</h3>
+                                <p class="text-gray-400 text-sm mb-6">Submit your completed practice assignment</p>
+                                
+                                <input type="file" id="file-input" accept=".pdf,.doc,.docx" class="hidden" onchange="handleFileSelect(event)">
+                                <button id="upload-btn" onclick="triggerFileUpload()" 
+                                        class="bg-bb-gray text-gray-400 px-6 py-3 rounded-lg text-sm font-bold w-full cursor-not-allowed" 
+                                        disabled>
+                                    TIMER NOT STARTED
+                                </button>
+                                <div id="upload-status" class="mt-3 text-xs text-gray-400"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="mt-8 bg-bb-gray border border-bb-green rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-bb-green mb-3 terminal-text">PRACTICE INSTRUCTIONS</h3>
+                        <ul class="text-gray-300 text-sm space-y-2">
+                            <li>• Click "START PRACTICE" to download your assignment and begin the 1-hour timer</li>
+                            <li>• Complete your work within the time limit</li>
+                            <li>• Upload your solution before the timer expires</li>
+                            <li>• After time expires, you cannot upload until teacher resets your session</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Secret Page -->
+    <div id="top-secret-page" class="page hidden">
+        <div class="min-h-screen bg-bb-dark py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Student Monitoring Section (Only visible in TOP SECRET) -->
+                <div class="mt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-red-400 terminal-text">STUDENT SURVEILLANCE</h2>
+                        <button onclick="refreshStudentData()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors">
+                            REFRESH DATA
+                        </button>
+                    </div>
+                    
+                    <div id="student-submissions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Student submission cards will be dynamically generated here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -708,6 +820,16 @@
             
             // Show selected page
             document.getElementById(pageId + '-page').classList.remove('hidden');
+            
+            // Special handling for student portal
+            if (pageId === 'student-portal' && hasStudentPortalAccess && currentStudent) {
+                setupStudentPortal();
+            }
+            
+            // Special handling for TOP SECRET page - populate student surveillance
+            if (pageId === 'top-secret') {
+                populateStudentSurveillance();
+            }
             
             // Update navigation
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -1088,7 +1210,73 @@
         // Login functionality with separate authentication functions
         let hasAIAccess = false;
         let hasDownloadsAccess = false;
+        let hasStudentPortalAccess = false;
+        let currentStudent = null;
         let pendingPage = null;
+
+        // Student database with unique credentials and assignments
+        const studentDatabase = {
+            'student001': {
+                password: '1202',
+                name: 'Aliary-10',
+                assignment: '1515.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            },
+            'student002': {
+                password: '1235',
+                name: 'Ahmadi-10',
+                assignment: '1616.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            },
+            'student003': {
+                password: '1256',
+                name: 'Ghalibaf-10',
+                assignment: '5656.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            },
+            'student004': {
+                password: '4586',
+                name: 'habibi-11',
+                assignment: '8569.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            },
+            'student005': {
+                password: '4579',
+                name: 'Naseri-12',
+                assignment: '1685.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            },
+            'student006': {
+                password: '1562',
+                name: 'Kave-11',
+                assignment: '1569.pdf',
+                submissions: [],
+                timerStartTime: null,
+                timerEndTime: null,
+                canUpload: false,
+                downloadedAt: null
+            }
+        };
 
         // Separate authentication function for AI page
         function authenticateAI(username, password) {
@@ -1098,6 +1286,15 @@
         // Separate authentication function for Downloads page
         function authenticateDownloads(username, password) {
             return username === 'student' && password === 'chemistry123';
+        }
+
+        // New authentication function for Student Portal
+        function authenticateStudentPortal(username, password) {
+            if (studentDatabase[username] && studentDatabase[username].password === password) {
+                currentStudent = username;
+                return true;
+            }
+            return false;
         }
 
         function handleAILogin(event) {
@@ -1110,7 +1307,9 @@
 
             if (authenticateAI(username, password)) {
                 hasAIAccess = true;
-                hasDownloadsAccess = false; // Ensure downloads access is cleared
+                hasDownloadsAccess = false;
+                hasStudentPortalAccess = false;
+                currentStudent = null;
                 errorDiv.classList.add('hidden');
                 
                 // Show logout button
@@ -1136,7 +1335,9 @@
 
             if (authenticateDownloads(username, password)) {
                 hasDownloadsAccess = true;
-                hasAIAccess = false; // Ensure AI access is cleared
+                hasAIAccess = false;
+                hasStudentPortalAccess = false;
+                currentStudent = null;
                 errorDiv.classList.add('hidden');
                 
                 // Show logout button
@@ -1152,6 +1353,33 @@
             }
         }
 
+        function handleStudentPortalLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            console.log('Attempting Student Portal login with username:', username);
+
+            if (authenticateStudentPortal(username, password)) {
+                hasStudentPortalAccess = true;
+                hasAIAccess = false;
+                hasDownloadsAccess = false;
+                errorDiv.classList.add('hidden');
+                
+                // Show logout button
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('mobile-logout-btn').classList.remove('hidden');
+                
+                console.log('Student Portal access granted for:', studentDatabase[currentStudent].name);
+                showLoginSuccess('STUDENT_PORTAL_ACCESS');
+            } else {
+                errorDiv.textContent = 'STUDENT PORTAL: Invalid student credentials';
+                errorDiv.classList.remove('hidden');
+                console.log('Student Portal access denied');
+            }
+        }
+
         function showLoginSuccess(accessType) {
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
@@ -1161,6 +1389,8 @@
                 message = 'AI NEURAL LINK ESTABLISHED - WELCOME RASHIDI';
             } else if (accessType === 'DOWNLOADS_ACCESS') {
                 message = 'DOWNLOADS ACCESS GRANTED - WELCOME STUDENT';
+            } else if (accessType === 'STUDENT_PORTAL') {
+                message = `STUDENT PORTAL ACCESS GRANTED - WELCOME ${currentStudent ? currentStudent.name.toUpperCase() : 'STUDENT'}`;
             } else {
                 message = 'ACCESS GRANTED - WELCOME TO THE LAB';
             }
@@ -1185,6 +1415,8 @@
                     showPage('ai');
                 } else if (accessType === 'DOWNLOADS_ACCESS') {
                     showPage('downloads');
+                } else if (accessType === 'STUDENT_PORTAL') {
+                    showPage('student-portal');
                 } else {
                     showPage('home');
                 }
@@ -1193,7 +1425,7 @@
 
         function checkLoginAndNavigate(page) {
             console.log('Checking login for page:', page);
-            console.log('Current auth state - AI Access:', hasAIAccess, 'Downloads Access:', hasDownloadsAccess);
+            console.log('Current auth state - AI Access:', hasAIAccess, 'Downloads Access:', hasDownloadsAccess, 'Student Portal Access:', hasStudentPortalAccess);
             
             if (page === 'ai' && !hasAIAccess) {
                 pendingPage = page;
@@ -1205,6 +1437,20 @@
             if (page === 'downloads' && !hasDownloadsAccess) {
                 pendingPage = page;
                 setupLoginFormForDownloads();
+                showPage('login');
+                return;
+            }
+            
+            if (page === 'student-portal' && !hasStudentPortalAccess) {
+                pendingPage = page;
+                setupLoginFormForStudentPortal();
+                showPage('login');
+                return;
+            }
+            
+            if (page === 'top-secret' && !hasAIAccess) {
+                pendingPage = page;
+                setupLoginFormForAI();
                 showPage('login');
                 return;
             }
@@ -1242,6 +1488,21 @@
             document.getElementById('login-error').textContent = '';
         }
 
+        function setupLoginFormForStudentPortal() {
+            const form = document.querySelector('form[onsubmit*="handleLogin"], form[onsubmit*="handleAILogin"], form[onsubmit*="handleDownloadsLogin"]');
+            form.setAttribute('onsubmit', 'handleStudentPortalLogin(event)');
+            
+            const title = document.querySelector('.login-title');
+            title.textContent = 'STUDENT PORTAL';
+            
+            const subtitle = document.querySelector('.login-subtitle');
+            subtitle.textContent = 'Enter your unique student credentials';
+            
+            // Clear any previous error messages
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('login-error').textContent = '';
+        }
+
         function showAccessDeniedMessage(message) {
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
@@ -1261,6 +1522,557 @@
             setTimeout(() => {
                 notification.remove();
             }, 4000);
+        }
+
+        function showDownloadNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function setupStudentPortal() {
+            if (!currentStudent) {
+                console.error('No current student set for portal setup');
+                return;
+            }
+            
+            console.log('Setting up student portal for:', currentStudent.name);
+            
+            // Update welcome message in header
+            const headerTitle = document.querySelector('#student-portal-page h1');
+            if (headerTitle) {
+                headerTitle.innerHTML = `STUDENT PORTAL - ${currentStudent.name.toUpperCase()}`;
+            }
+            
+            // Update header description
+            const headerDescription = document.querySelector('#student-portal-page .text-gray-400');
+            if (headerDescription) {
+                headerDescription.textContent = `Welcome ${currentStudent.name}! Your personalized chemistry learning hub with assignments and progress tracking.`;
+            }
+            
+            // Update assignments section with student-specific assignments
+            const assignmentsCard = document.querySelector('#student-portal-page .bg-bb-light:first-child');
+            if (assignmentsCard && currentStudent.assignments && currentStudent.assignments.length > 0) {
+                const assignmentsList = assignmentsCard.querySelector('.space-y-2');
+                if (assignmentsList) {
+                    assignmentsList.innerHTML = '';
+                    currentStudent.assignments.forEach(assignment => {
+                        const assignmentDiv = document.createElement('div');
+                        assignmentDiv.className = 'flex justify-between text-xs';
+                        assignmentDiv.innerHTML = `
+                            <span class="text-gray-300">${assignment.name}</span>
+                            <span class="text-bb-yellow">${assignment.dueDate}</span>
+                        `;
+                        assignmentsList.appendChild(assignmentDiv);
+                    });
+                }
+                
+                // Update the VIEW ALL button to download student's practice assignment
+                const viewAllBtn = assignmentsCard.querySelector('button');
+                if (viewAllBtn && currentStudent.practiceFile) {
+                    viewAllBtn.onclick = () => downloadStudentAssignment(currentStudent.practiceFile);
+                    viewAllBtn.innerHTML = 'DOWNLOAD PRACTICE';
+                    viewAllBtn.className = 'bg-bb-green text-bb-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-400 transition-colors glow-green w-full';
+                }
+            }
+            
+            // Update grades with student data
+            const gradesCard = document.querySelectorAll('#student-portal-page .bg-bb-light')[1];
+            if (gradesCard && currentStudent.grades) {
+                const gradesList = gradesCard.querySelector('.space-y-2');
+                if (gradesList) {
+                    gradesList.innerHTML = `
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-300">Overall Average</span>
+                            <span class="text-bb-green font-bold">${currentStudent.grades.overall}%</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-300">Practice Completed</span>
+                            <span class="text-bb-green font-bold">${currentStudent.grades.practiceCompleted || 'N/A'}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Add personalized quick action for assignment submission
+            const submitBtn = document.querySelector('#student-portal-page button[onclick*="Submit Assignment"]');
+            if (submitBtn) {
+                submitBtn.onclick = () => showAssignmentUpload();
+                submitBtn.className = 'bg-bb-gray border border-bb-green rounded-lg p-4 hover:border-bb-yellow transition-all card-hover text-left';
+            }
+            
+            console.log('Student portal setup complete');
+        }
+
+        function downloadStudentAssignment(filename) {
+            if (!filename) {
+                console.error('No practice file specified for student');
+                return;
+            }
+            
+            // Construct the GitHub URL for the student's practice file
+            const githubBaseUrl = 'https://jonasraschidie.github.io';
+            const fileUrl = `${githubBaseUrl}/${filename}`;
+            
+            console.log('Downloading student practice file:', fileUrl);
+            
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.target = '_blank';
+            link.download = filename.split('/').pop(); // Extract filename from path
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show download notification
+            showDownloadNotification(`Downloading ${filename.split('/').pop()}...`);
+        }
+
+        function showAssignmentUpload() {
+            // Create upload modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-bb-light rounded-xl border border-bb-green max-w-md w-full mx-4 p-6 glow-green">
+                    <div class="text-center mb-6">
+                        <div class="mx-auto h-16 w-16 bg-bb-yellow rounded-full flex items-center justify-center glow-yellow mb-4">
+                            <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-bb-yellow terminal-text">SUBMIT ASSIGNMENT</h3>
+                        <p class="text-gray-400 text-sm mt-2">Upload your completed practice work</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-bb-green text-sm font-bold mb-2 terminal-text">Student: ${currentStudent ? currentStudent.name : 'Unknown'}</label>
+                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" 
+                               class="w-full p-3 bg-bb-dark border border-bb-green rounded-lg text-gray-300 focus:border-bb-yellow focus:outline-none">
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-bb-gray text-gray-300 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-600 transition-colors">
+                            CANCEL
+                        </button>
+                        <button onclick="submitAssignment(this)" 
+                                class="flex-1 bg-bb-yellow text-bb-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">
+                            SUBMIT
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function submitAssignment(button) {
+            const modal = button.closest('.fixed');
+            const fileInput = modal.querySelector('input[type="file"]');
+            
+            if (!fileInput.files.length) {
+                alert('Please select a file to upload');
+                return;
+            }
+            
+            // Simulate file upload (in real implementation, this would upload to server)
+            const fileName = fileInput.files[0].name;
+            const submitTime = new Date().toLocaleString();
+            
+            // Add to student's submitted assignments
+            if (currentStudent) {
+                if (!currentStudent.submittedAssignments) {
+                    currentStudent.submittedAssignments = [];
+                }
+                currentStudent.submittedAssignments.push({
+                    fileName: fileName,
+                    submitTime: submitTime,
+                    status: 'Submitted'
+                });
+                
+                // Update the student database (in a real app, this would sync with server)
+                studentDatabase[currentStudent.username] = currentStudent;
+            }
+            
+            // Show success message
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>ASSIGNMENT SUBMITTED SUCCESSFULLY!</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+            
+            // Close modal
+            modal.remove();
+        }
+
+        function refreshStudentData() {
+            console.log('Refreshing student data for TOP SECRET surveillance');
+            populateStudentSurveillance();
+            
+            // Show refresh notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 glow-red font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>STUDENT DATA REFRESHED</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+
+        function populateStudentSurveillance() {
+            const grid = document.getElementById('student-submissions-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = ''; // Clear existing content
+            
+            // Loop through all students in the database
+            Object.keys(studentDatabase).forEach(username => {
+                const student = studentDatabase[username];
+                const card = document.createElement('div');
+                card.className = 'bg-bb-light rounded-xl border border-red-500 hover:border-red-400 transition-all card-hover p-6';
+                
+                // Get status information
+                const hasDownloaded = student.downloadedAt ? true : false;
+                const submissionCount = student.submissions ? student.submissions.length : 0;
+                const hasSubmitted = submissionCount > 0;
+                
+                // Get timer status
+                let timerStatus = 'Not Started';
+                let timeRemaining = 'N/A';
+                
+                if (student.timerStartTime && student.timerEndTime) {
+                    const now = new Date();
+                    const endTime = new Date(student.timerEndTime);
+                    const remaining = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+                    
+                    if (remaining > 0) {
+                        const hours = Math.floor(remaining / 3600);
+                        const minutes = Math.floor((remaining % 3600) / 60);
+                        const seconds = remaining % 60;
+                        timeRemaining = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        timerStatus = 'Active';
+                    } else {
+                        timerStatus = 'Expired';
+                        timeRemaining = '00:00:00';
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-bold text-lg">${student.name.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div>
+                                <h3 class="text-red-400 font-bold text-lg terminal-text">${student.name.toUpperCase()}</h3>
+                                <p class="text-gray-400 text-sm">ID: ${username}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-400">Timer</div>
+                            <div class="text-sm font-bold ${timerStatus === 'Active' ? 'text-bb-yellow' : timerStatus === 'Expired' ? 'text-red-400' : 'text-gray-400'}">${timeRemaining}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="text-center p-3 bg-bb-gray rounded-lg border ${hasDownloaded ? 'border-bb-green' : 'border-gray-600'}">
+                            <div class="text-xs text-gray-400 mb-1">Downloaded</div>
+                            <div class="text-sm font-bold ${hasDownloaded ? 'text-bb-green' : 'text-gray-400'}">
+                                ${hasDownloaded ? '✓ YES' : '✗ NO'}
+                            </div>
+                        </div>
+                        <div class="text-center p-3 bg-bb-gray rounded-lg border ${hasSubmitted ? 'border-bb-green' : 'border-gray-600'}">
+                            <div class="text-xs text-gray-400 mb-1">Submitted</div>
+                            <div class="text-sm font-bold ${hasSubmitted ? 'text-bb-green' : 'text-gray-400'}">
+                                ${hasSubmitted ? '✓ YES' : '✗ NO'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        ${hasSubmitted ? `
+                            <button onclick="downloadStudentFile('${username}')" class="w-full bg-red-600 text-white px-4 py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors">
+                                DOWNLOAD SUBMITTED FILE
+                            </button>
+                        ` : `
+                            <div class="w-full bg-bb-gray text-gray-400 px-4 py-3 rounded-lg text-sm text-center">
+                                NO FILE TO DOWNLOAD
+                            </div>
+                        `}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function downloadStudentFile(username) {
+            const student = studentDatabase[username];
+            if (!student || !student.submissions || student.submissions.length === 0) {
+                alert('No submitted files found for this student.');
+                return;
+            }
+            
+            // Get the most recent submission
+            const latestSubmission = student.submissions[student.submissions.length - 1];
+            
+            // Create a mock download for the submitted file
+            // In a real implementation, this would download the actual file from the server
+            const blob = new Blob([`Student: ${student.name}\nFile: ${latestSubmission.fileName}\nSubmitted: ${latestSubmission.submitTime}\nStatus: ${latestSubmission.status}\n\nNote: This is a mock download. In a real system, the actual submitted file would be downloaded.`], 
+                                 { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${username}_${latestSubmission.fileName}`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            
+            // Show download notification
+            showDownloadNotification(`Downloaded ${student.name}'s submitted file: ${latestSubmission.fileName}`);
+        }
+
+        // Global timer variables
+        let practiceTimer = null;
+        let timeRemaining = 3600; // 1 hour in seconds
+
+        function downloadPracticeFile() {
+            if (!currentStudent) {
+                alert('Student not found. Please log in again.');
+                return;
+            }
+
+            const student = studentDatabase[currentStudent];
+            const now = new Date();
+            
+            // Update student timer data
+            student.timerStartTime = now.toISOString();
+            student.timerEndTime = new Date(now.getTime() + 3600000).toISOString(); // +1 hour
+            student.downloadedAt = now.toISOString();
+            student.canUpload = true;
+            
+            // Reset timer
+            timeRemaining = 3600;
+            
+            // Start the practice file download from GitHub
+            const fileName = student.assignment;
+            const githubUrl = `https://jonasraschidie.github.io/${fileName}`;
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = githubUrl;
+            link.download = fileName;
+            link.click();
+            
+            // Start the timer
+            startPracticeTimer();
+            
+            // Update UI
+            updateDownloadButton();
+            updateUploadButton();
+            
+            // Show success message
+            showDownloadNotification(`Practice file ${fileName} downloaded! Timer started.`);
+        }
+
+        function startPracticeTimer() {
+            const timerDisplay = document.getElementById('timer-display');
+            const timerStatus = document.getElementById('timer-status');
+            
+            timerStatus.textContent = 'Practice in progress - Upload available';
+            
+            practiceTimer = setInterval(() => {
+                timeRemaining--;
+                
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+                
+                timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(practiceTimer);
+                    timerDisplay.textContent = '00:00:00';
+                    timerStatus.textContent = 'Time expired - Upload disabled';
+                    
+                    // Disable upload for current student
+                    if (currentStudent) {
+                        studentDatabase[currentStudent].canUpload = false;
+                    }
+                    
+                    updateUploadButton();
+                    
+                    // Show time expired notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+                    notification.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>TIME EXPIRED - UPLOAD DISABLED</span>
+                        </div>
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 5000);
+                }
+            }, 1000);
+        }
+
+        function updateDownloadButton() {
+            const downloadBtn = document.getElementById('download-btn');
+            if (currentStudent && studentDatabase[currentStudent].downloadedAt) {
+                downloadBtn.textContent = 'PRACTICE DOWNLOADED';
+                downloadBtn.disabled = true;
+                downloadBtn.className = 'bg-bb-gray text-gray-400 px-6 py-3 rounded-lg text-sm font-bold w-full cursor-not-allowed';
+            }
+        }
+
+        function updateUploadButton() {
+            const uploadBtn = document.getElementById('upload-btn');
+            const uploadStatus = document.getElementById('upload-status');
+            
+            if (!currentStudent) return;
+            
+            const student = studentDatabase[currentStudent];
+            
+            if (student.canUpload && timeRemaining > 0) {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'SELECT FILE TO UPLOAD';
+                uploadBtn.className = 'bg-bb-yellow text-bb-dark px-6 py-3 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow w-full';
+                uploadStatus.textContent = `Time remaining: ${Math.floor(timeRemaining / 60)}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
+            } else if (student.timerStartTime && !student.canUpload) {
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'TIME EXPIRED';
+                uploadBtn.className = 'bg-red-600 text-white px-6 py-3 rounded-lg text-sm font-bold w-full cursor-not-allowed';
+                uploadStatus.textContent = 'Upload window has closed';
+            } else {
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'DOWNLOAD FIRST';
+                uploadBtn.className = 'bg-bb-gray text-gray-400 px-6 py-3 rounded-lg text-sm font-bold w-full cursor-not-allowed';
+                uploadStatus.textContent = 'Download practice file to enable upload';
+            }
+        }
+
+        function triggerFileUpload() {
+            if (!currentStudent || !studentDatabase[currentStudent].canUpload) {
+                return;
+            }
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!currentStudent || !studentDatabase[currentStudent].canUpload) {
+                alert('Upload not available. Please download practice file first or time may have expired.');
+                return;
+            }
+            
+            // Add submission to student record
+            const student = studentDatabase[currentStudent];
+            const submission = {
+                fileName: file.name,
+                fileSize: file.size,
+                submitTime: new Date().toISOString(),
+                status: 'Submitted'
+            };
+            
+            student.submissions.push(submission);
+            
+            // Disable further uploads
+            student.canUpload = false;
+            updateUploadButton();
+            
+            // Stop timer
+            if (practiceTimer) {
+                clearInterval(practiceTimer);
+            }
+            
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>FILE UPLOADED SUCCESSFULLY</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+            
+            // Update timer display
+            const timerStatus = document.getElementById('timer-status');
+            timerStatus.textContent = 'Practice completed - File submitted';
+        }
+
+        function setupStudentPortal() {
+            if (!currentStudent) return;
+            
+            const student = studentDatabase[currentStudent];
+            
+            // Check if student has active session
+            if (student.timerStartTime && student.timerEndTime) {
+                const now = new Date();
+                const endTime = new Date(student.timerEndTime);
+                
+                if (now < endTime) {
+                    // Resume existing session
+                    timeRemaining = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+                    if (timeRemaining > 0) {
+                        startPracticeTimer();
+                    }
+                } else {
+                    // Session expired
+                    student.canUpload = false;
+                    timeRemaining = 0;
+                }
+            }
+            
+            // Update buttons based on current state
+            updateDownloadButton();
+            updateUploadButton();
         }
 
         function logoutAI() {
@@ -1330,6 +2142,8 @@
         function logoutAll() {
             hasAIAccess = false;
             hasDownloadsAccess = false;
+            hasStudentPortalAccess = false;
+            currentStudent = null;
             pendingPage = null;
             document.getElementById('logout-btn').classList.add('hidden');
             document.getElementById('mobile-logout-btn').classList.add('hidden');
