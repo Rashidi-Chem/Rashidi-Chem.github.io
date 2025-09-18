@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High School Chemistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bb-green': '#00ff41',
+                        'bb-dark': '#0d1117',
+                        'bb-gray': '#1c2128',
+                        'bb-light': '#21262d',
+                        'bb-yellow': '#f0e68c'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #0d1117;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(13, 17, 23, 0.95), rgba(28, 33, 40, 0.9)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="molecules" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="2" fill="rgba(0,255,65,0.1)"/><circle cx="60" cy="40" r="1.5" fill="rgba(240,230,140,0.08)"/><circle cx="40" cy="60" r="2.5" fill="rgba(0,255,65,0.06)"/><line x1="20" y1="20" x2="60" y2="40" stroke="rgba(0,255,65,0.05)" stroke-width="1"/><line x1="60" y1="40" x2="40" y2="60" stroke="rgba(240,230,140,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23molecules)"/></svg>');
+            background-size: cover;
+        }
+        .glow-text {
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41;
+        }
+        .glow-green {
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        .glow-yellow {
+            box-shadow: 0 0 20px rgba(240, 230, 140, 0.3);
+        }
+        .chat-container { height: calc(100vh - 4rem); }
+        .chat-messages { height: calc(100% - 5rem); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 20px 25px -5px rgba(0, 255, 65, 0.2);
+        }
+        .periodic-element {
+            background: linear-gradient(135deg, #1c2128, #21262d);
+            border: 1px solid #00ff41;
+        }
+        .hazmat-style {
+            background: linear-gradient(45deg, #f0e68c, #daa520);
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .terminal-text {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ff41;
+        }
+        .typing-dots {
+            animation: typingDots 1.5s infinite;
+        }
+        @keyframes typingDots {
+            0%, 20% { content: 'Analyzing chemical patterns'; }
+            40% { content: 'Analyzing chemical patterns.'; }
+            60% { content: 'Analyzing chemical patterns..'; }
+            80%, 100% { content: 'Analyzing chemical patterns...'; }
+        }
+        .terminal-cursor {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .neural-pulse {
+            animation: neuralPulse 2s ease-in-out infinite;
+        }
+        @keyframes neuralPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.6), 0 0 40px rgba(0, 255, 65, 0.4); }
+        }
+        .ai-thinking {
+            background: linear-gradient(45deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.2));
+            animation: aiThinking 1.5s ease-in-out infinite;
+        }
+        @keyframes aiThinking {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+    </style>
+</head>
+<body class="bg-bb-dark text-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-bb-gray shadow-lg border-b border-bb-green sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-bb-green rounded-lg flex items-center justify-center glow-green">
+                        <span class="text-bb-dark font-bold text-lg">Ra</span>
+                    </div>
+                    <span class="text-xl font-bold text-bb-green terminal-text">CHEMISTRY LAB</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="showPage('home')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">HOME</button>
+                    <button onclick="checkLoginAndNavigate('ai')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">AI ASSISTANT</button>
+                    <button onclick="checkLoginAndNavigate('downloads')" class="nav-link text-gray-300 hover:text-bb-green px-3 py-2 text-sm font-medium transition-colors terminal-text">DOWNLOADS</button>
+                    <button id="logout-btn" onclick="logoutAll()" class="nav-link text-red-400 hover:text-red-300 px-3 py-2 text-sm font-medium transition-colors terminal-text hidden">LOGOUT</button>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-md text-gray-300 hover:text-bb-green">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-bb-gray border-t border-bb-green">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="showPage('home'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">HOME</button>
+                <button onclick="checkLoginAndNavigate('ai'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">AI ASSISTANT</button>
+                <button onclick="checkLoginAndNavigate('downloads'); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-bb-green w-full text-left terminal-text">DOWNLOADS</button>
+                <button id="mobile-logout-btn" onclick="logoutAll(); toggleMobileMenu()" class="block px-3 py-2 text-base font-medium text-red-400 hover:text-red-300 w-full text-left terminal-text hidden">LOGOUT</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page">
+        <!-- Hero Section -->
+        <section class="hero-bg text-white py-20 lg:py-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="mb-8">
+                    <div class="inline-flex items-center space-x-4 mb-6">
+                        <div class="periodic-element w-20 h-20 flex flex-col items-center justify-center rounded-lg glow-green">
+                            <span class="text-xs text-bb-green">88</span>
+                            <span class="text-2xl font-bold text-bb-green">Ra</span>
+                            <span class="text-xs text-bb-green">226.03</span>
+                        </div>
+                        <div class="periodic-element w-20 h-20 flex flex-col items-center justify-center rounded-lg glow-green">
+                            <span class="text-xs text-bb-green">6</span>
+                            <span class="text-2xl font-bold text-bb-green">C</span>
+                            <span class="text-xs text-bb-green">12.011</span>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in glow-text terminal-text">MR. Rashidi's Chem Class</h1>
+                <p class="text-xl md:text-2xl mb-8 text-bb-yellow max-w-3xl mx-auto fade-in">COOK UP KNOWLEDGE • MASTER THE ELEMENTS • BREAK BAD HABITS</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in">
+                    <button onclick="checkLoginAndNavigate('ai')" class="hazmat-style px-8 py-3 rounded-lg font-bold hover:bg-yellow-400 transition-colors glow-yellow">START COOKING</button>
+                    <button onclick="checkLoginAndNavigate('downloads')" class="border-2 border-bb-green text-bb-green px-8 py-3 rounded-lg font-bold hover:bg-bb-green hover:text-bb-dark transition-colors glow-green terminal-text">GET SUPPLIES</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="py-16 bg-bb-gray">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-bb-green mb-4 terminal-text">THE LAB</h2>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">Welcome to the most dangerous chemistry class in Albuquerque. Here, we don't just study chemistry - we live it, breathe it, and respect its power.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center p-6 rounded-xl bg-bb-light border border-bb-green card-hover glow-green">
+                        <div class="w-16 h-16 bg-bb-green rounded-full flex items-center justify-center mx-auto mb-4 glow-green">
+                            <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-bb-green terminal-text">PRECISION</h3>
+                        <p class="text-gray-300">Every measurement matters. One wrong calculation and everything goes to hell.</p>
+                    </div>
+                    <div class="text-center p-6 rounded-xl bg-bb-light border border-bb-yellow card-hover glow-yellow">
+                        <div class="w-16 h-16 bg-bb-yellow rounded-full flex items-center justify-center mx-auto mb-4 glow-yellow">
+                            <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-bb-yellow terminal-text">AI HEISENBERG</h3>
+                        <p class="text-gray-300">Your digital chemistry teacher. Available 24/7 to answer your questions.</p>
+                    </div>
+                    <div class="text-center p-6 rounded-xl bg-bb-light border border-red-500 card-hover">
+                        <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-red-400 terminal-text">DANGER</h3>
+                        <p class="text-gray-300">Respect the chemistry. Safety protocols are non-negotiable.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Cards -->
+        <section class="py-16 bg-bb-dark">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-bb-green mb-12 terminal-text">CHOOSE YOUR PATH</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <button onclick="checkLoginAndNavigate('ai')" class="bg-bb-light p-8 rounded-xl border border-bb-green hover:border-bb-yellow transition-all text-left card-hover glow-green">
+                        <div class="w-12 h-12 bg-bb-green rounded-lg flex items-center justify-center mb-4 glow-green">
+                            <svg class="w-6 h-6 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-bb-green terminal-text">AI CHEMISTRY TUTOR</h3>
+                        <p class="text-gray-300">Ask about reactions, formulas, and molecular structures</p>
+                    </button>
+                    <button onclick="checkLoginAndNavigate('downloads')" class="bg-bb-light p-8 rounded-xl border border-bb-yellow hover:border-bb-green transition-all text-left card-hover glow-yellow">
+                        <div class="w-12 h-12 bg-bb-yellow rounded-lg flex items-center justify-center mb-4 glow-yellow">
+                            <svg class="w-6 h-6 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-bb-yellow terminal-text">EQUIPMENT & MANUALS</h3>
+                        <p class="text-gray-300">Download lab procedures, safety guides, and reference materials</p>
+                    </button>
+                    <div class="bg-bb-light p-8 rounded-xl border border-red-500 card-hover">
+                        <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-red-400 terminal-text">PERIODIC TABLE</h3>
+                        <p class="text-gray-300">Interactive element database with molecular properties</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Announcements -->
+        <section class="py-16 bg-bb-gray">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-bb-green mb-12 terminal-text">LAB UPDATES</h2>
+                <div class="space-y-6">
+                    <div class="bg-bb-light border-l-4 border-bb-green p-6 rounded-r-lg glow-green">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">!</span>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-bb-yellow terminal-text">NEW SAFETY PROTOCOLS</h3>
+                                <p class="text-gray-300 mt-1">Updated hazmat procedures. Failure to comply results in immediate lab suspension.</p>
+                                <p class="text-sm text-gray-500 mt-2">Posted 2 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-bb-light border-l-4 border-bb-yellow p-6 rounded-r-lg glow-yellow">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-bb-green rounded-full flex items-center justify-center">
+                                    <span class="text-bb-dark font-bold text-sm">✓</span>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-bb-green terminal-text">AI HEISENBERG ONLINE</h3>
+                                <p class="text-gray-300 mt-1">Your digital chemistry mentor is now operational. Ask anything.</p>
+                                <p class="text-sm text-gray-500 mt-2">Posted 1 week ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-bb-dark text-gray-300 py-12 border-t border-bb-green">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-bb-green terminal-text">LAB SUPERVISOR</h3>
+                        <p class="text-gray-400 mb-2">Mr. <span class="text-2xl font-bold text-bb-green">Ra</span>shidi</p>
+                        <p class="text-gray-400 mb-2">Chemistry Department</p>
+                        <p class="text-gray-400 mb-2"></p>
+                        <p class="text-gray-400">Telegram ID : @jjonas8</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-bb-green terminal-text">NAVIGATION</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><button onclick="showPage('home')" class="hover:text-bb-green transition-colors terminal-text">HOME</button></li>
+                            <li><button onclick="checkLoginAndNavigate('ai')" class="hover:text-bb-green transition-colors terminal-text">AI ASSISTANT</button></li>
+                            <li><button onclick="checkLoginAndNavigate('downloads')" class="hover:text-bb-green transition-colors terminal-text">DOWNLOADS</button></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-bb-green terminal-text">SCHOOL RESOURCES</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="https://jonasraschidie.github.io" target="_blank" rel="noopener noreferrer" class="hover:text-bb-green transition-colors">Rashidi Personal Portal</a></li>
+                            <li><button onclick="checkLoginAndNavigate('downloads')" class="hover:text-bb-green transition-colors">Student Database</button></li>
+                            <li><a href="https://oercommons.org/hubs/NSDL" target="_blank" rel="noopener noreferrer" class="hover:text-bb-green transition-colors">Digital Library</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-bb-gray mt-8 pt-8 text-center text-gray-500">
+                    <p>&copy; 2024 Mr. <span class="text-2xl font-bold text-bb-green">Ra</span>shidi's Chem Web. Handle with care.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- AI Assistant Page -->
+    <div id="ai-page" class="page hidden">
+        <div class="flex h-screen bg-bb-dark">
+            <!-- Sidebar (collapsible) -->
+            <div id="sidebar" class="hidden lg:flex lg:w-64 bg-bb-gray border-r border-bb-green flex-col">
+                <div class="p-4 border-b border-bb-green">
+                    <h2 class="text-lg font-semibold text-bb-green terminal-text">AI Ra⁸⁸SHIDI</h2>
+                    <p class="text-xs text-gray-400">Chemistry Consultant</p>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="space-y-4">
+                        <div class="bg-bb-light p-3 rounded-lg border border-bb-green">
+                            <h3 class="font-medium text-sm text-bb-green mb-2 terminal-text">QUICK TOPICS</h3>
+                            <div class="space-y-1">
+                                <button onclick="askQuestion('Explain the periodic table structure')" class="text-left text-sm text-gray-400 hover:text-bb-green block w-full">Periodic Elements</button>
+                                <button onclick="askQuestion('How do molecular bonds work?')" class="text-left text-sm text-gray-400 hover:text-bb-green block w-full">Molecular Bonding</button>
+                                <button onclick="askQuestion('Teach me equation balancing')" class="text-left text-sm text-gray-400 hover:text-bb-green block w-full">Equation Balance</button>
+                                <button onclick="askQuestion('What makes acids dangerous?')" class="text-left text-sm text-gray-400 hover:text-bb-green block w-full">Acids & Bases</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="flex-1 flex flex-col">
+                <!-- Chat Header -->
+                <div class="bg-bb-gray border-b border-bb-green p-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-bb-green">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <div class="w-10 h-10 bg-bb-green rounded-full flex items-center justify-center glow-green">
+                            <span class="text-bb-dark font-bold">Ra</span>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold text-bb-green terminal-text">AI Ra⁸⁸SHIDI</h1>
+                            <p class="text-sm text-gray-400">Your chemistry consultant is online</p>
+                        </div>
+                    </div>
+                    <button onclick="clearChat()" class="text-sm text-gray-400 hover:text-bb-green px-3 py-1 rounded-md border border-bb-green terminal-text">CLEAR</button>
+                </div>
+
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-bb-green rounded-full flex items-center justify-center flex-shrink-0 glow-green">
+                            <span class="text-bb-dark font-bold text-xs">Ra</span>
+                        </div>
+                        <div class="bg-bb-light rounded-lg p-4 border border-bb-green max-w-3xl glow-green">
+                            <p class="text-gray-200">I am Ra⁸⁸shidi. Your AI chemistry consultant.</p>
+                            <ul class="mt-2 text-gray-400 text-sm space-y-1">
+                                <li>• Chemical equations and molecular balance</li>
+                                <li>• Periodic elements and atomic structure</li>
+                                <li>• Molecular bonding and compound formation</li>
+                                <li>• Acid-base reactions and pH calculations</li>
+                                <li>• Stoichiometry and molar mass calculations</li>
+                            </ul>
+                            <p class="mt-2 text-bb-green terminal-text">What do you need to know?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="bg-bb-gray border-t border-bb-green p-4">
+                    <div class="flex space-x-3">
+                        <input 
+                            type="text" 
+                            id="chat-input" 
+                            placeholder="Ask about chemistry..." 
+                            class="flex-1 bg-bb-light border border-bb-green rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-bb-green focus:border-transparent"
+                            onkeypress="handleChatKeypress(event)"
+                        >
+                        <button 
+                            onclick="sendMessage()" 
+                            class="bg-bb-green text-bb-dark px-6 py-3 rounded-lg hover:bg-green-400 transition-colors flex items-center space-x-2 font-bold glow-green"
+                        >
+                            <span>SEND</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="min-h-screen bg-bb-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <div class="mx-auto h-20 w-20 bg-bb-green rounded-full flex items-center justify-center glow-green mb-6">
+                        <span class="text-bb-dark font-bold text-2xl">Ra</span>
+                    </div>
+                    <h2 class="login-title text-3xl font-bold text-bb-green terminal-text glow-text">SECURE ACCESS</h2>
+                    <p class="login-subtitle mt-2 text-gray-400">Enter your credentials to access the chemistry lab</p>
+                </div>
+                <div class="bg-bb-light rounded-xl border border-bb-green p-8 glow-green">
+                    <form class="space-y-6" onsubmit="handleLogin(event)">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-bb-green terminal-text mb-2">USERNAME</label>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text" 
+                                required 
+                                class="w-full px-4 py-3 bg-bb-gray border border-bb-green rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-bb-green focus:border-transparent"
+                                placeholder="Enter your username"
+                            >
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-bb-green terminal-text mb-2">PASSWORD</label>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                required 
+                                class="w-full px-4 py-3 bg-bb-gray border border-bb-green rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-bb-green focus:border-transparent"
+                                placeholder="Enter your password"
+                            >
+                        </div>
+                        <div id="login-error" class="hidden bg-red-500 bg-opacity-20 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
+                            <p class="font-bold">⚠️ ACCESS DENIED</p>
+                            <p class="text-xs mt-1">Invalid credentials. Use the appropriate credentials below for your desired access level.</p>
+                        </div>
+                        <div>
+                            <button 
+                                type="submit" 
+                                class="w-full hazmat-style px-6 py-3 rounded-lg font-bold hover:bg-yellow-400 transition-colors glow-yellow"
+                            >
+                                ACCESS LAB
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Downloads Page -->
+    <div id="downloads-page" class="page hidden">
+        <div class="min-h-screen bg-bb-dark py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-bold text-bb-green mb-4 terminal-text glow-text">LAB EQUIPMENT & MANUALS</h1>
+                    <p class="text-lg text-gray-400 max-w-3xl mx-auto">Access essential chemistry resources. Everything you need for safe and precise laboratory work.</p>
+                </div>
+
+                <!-- Categories -->
+                <div class="mb-8">
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button onclick="filterDownloads('all')" class="filter-btn bg-bb-green text-bb-dark px-4 py-2 rounded-lg text-sm font-bold terminal-text glow-green">ALL EQUIPMENT</button>
+                        <button onclick="filterDownloads('textbooks')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">TEXTBOOKS</button>
+                        <button onclick="filterDownloads('lab')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">LAB MANUALS</button>
+                        <button onclick="filterDownloads('reference')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">REFERENCE</button>
+                        <button onclick="filterDownloads('assignments')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">ASSIGNMENTS</button>
+                        <button onclick="filterDownloads('grade10')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">GRADE 10</button>
+                        <button onclick="filterDownloads('grade11')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">GRADE 11</button>
+                        <button onclick="filterDownloads('grade12')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">GRADE 12</button>
+                        <button onclick="filterDownloads('university')" class="filter-btn bg-bb-gray text-gray-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-bb-light border border-bb-green terminal-text">UNIVERSITY</button>
+                    </div>
+                </div>
+
+                <!-- Downloads Grid -->
+                <div id="downloads-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Textbooks -->
+                    <div class="download-item textbooks bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-green to-green-600 rounded-lg mb-4 flex items-center justify-center glow-green">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-green mb-2 terminal-text">GENERAL CHEMISTRY</h3>
+                            <p class="text-gray-400 text-sm mb-4">Complete guide to atomic structure, molecular bonds, and chemical reactions. Essential reading.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-green">PDF • 15.2 MB</span>
+                                <button onclick="downloadFile('chemistry-textbook.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="download-item textbooks bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-yellow to-yellow-600 rounded-lg mb-4 flex items-center justify-center glow-yellow">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-yellow mb-2 terminal-text">ORGANIC COMPOUNDS</h3>
+                            <p class="text-gray-400 text-sm mb-4">Advanced organic chemistry. Functional groups, reactions, and synthesis pathways.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-green">PDF • 12.8 MB</span>
+                                <button onclick="downloadFile('organic-chemistry.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lab Manuals -->
+                    <div class="download-item lab bg-bb-light rounded-xl border border-red-500 hover:border-bb-yellow transition-all card-hover">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-lg mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-red-400 mb-2 terminal-text">SAFETY PROTOCOLS</h3>
+                            <p class="text-gray-400 text-sm mb-4">Critical safety procedures. Hazmat handling, emergency protocols, and lab security.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-red-500">PDF • 3.2 MB</span>
+                                <button onclick="downloadFile('lab-safety.pdf')" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="download-item lab bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-green to-green-600 rounded-lg mb-4 flex items-center justify-center glow-green">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-green mb-2 terminal-text">LAB PROCEDURES</h3>
+                            <p class="text-gray-400 text-sm mb-4">Step-by-step experimental procedures. 25 essential chemistry experiments with precision data.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-green">PDF • 8.7 MB</span>
+                                <button onclick="downloadFile('lab-experiments.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reference Materials -->
+                    <div class="download-item reference bg-bb-light rounded-xl border border-bb-yellow hover:border-bb-green transition-all card-hover glow-yellow">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-yellow to-orange-500 rounded-lg mb-4 flex items-center justify-center glow-yellow">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 000 2h.5l.5 2H3a1 1 0 000 2h1.28l.606 3.03A1 1 0 006.82 14H16a1 1 0 000-2H7.18l-.5-2.5H16a1 1 0 000-2H6.18l-.5-2.5H16a1 1 0 100-2H3z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-yellow mb-2 terminal-text">PERIODIC TABLE</h3>
+                            <p class="text-gray-400 text-sm mb-4">Complete element database. Atomic masses, electron configurations, and molecular properties.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-yellow">PDF • 2.1 MB</span>
+                                <button onclick="downloadFile('periodic-table.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="download-item reference bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-green to-green-600 rounded-lg mb-4 flex items-center justify-center glow-green">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-green mb-2 terminal-text">FORMULA DATABASE</h3>
+                            <p class="text-gray-400 text-sm mb-4">Essential chemistry formulas, constants, and conversion factors. Quick reference guide.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-green">PDF • 1.5 MB</span>
+                                <button onclick="downloadFile('formulas.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assignments -->
+                    <div class="download-item assignments bg-bb-light rounded-xl border border-bb-green hover:border-bb-yellow transition-all card-hover glow-green">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-green to-green-600 rounded-lg mb-4 flex items-center justify-center glow-green">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-green mb-2 terminal-text">PRACTICE PROBLEMS</h3>
+                            <p class="text-gray-400 text-sm mb-4">Comprehensive problem sets covering all chemistry topics with detailed solution guides.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-green">PDF • 6.4 MB</span>
+                                <button onclick="downloadFile('practice-problems.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="download-item assignments bg-bb-light rounded-xl border border-bb-yellow hover:border-bb-green transition-all card-hover glow-yellow">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-bb-yellow to-yellow-600 rounded-lg mb-4 flex items-center justify-center glow-yellow">
+                                <svg class="w-8 h-8 text-bb-dark" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-bb-yellow mb-2 terminal-text">ASSIGNMENT TEMPLATES</h3>
+                            <p class="text-gray-400 text-sm mb-4">Structured templates for chemistry assignments with proper formatting and calculation spaces.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-bb-yellow">PDF • 2.8 MB</span>
+                                <button onclick="downloadFile('homework-templates.pdf')" class="hazmat-style px-4 py-2 rounded-lg text-sm font-bold hover:bg-yellow-400 transition-colors glow-yellow">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grade 10 Books -->
+                    <div class="download-item grade10 bg-bb-light rounded-xl border border-blue-500 hover:border-bb-yellow transition-all card-hover">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-blue-400 mb-2 terminal-text">GRADE 10 CHEMISTRY</h3>
+                            <p class="text-gray-400 text-sm mb-4">Introduction to chemistry fundamentals. Atomic theory, basic compounds, and simple reactions.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-blue-500">PDF • 8.5 MB</span>
+                                <button onclick="downloadFile('grade10-chemistry.pdf')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grade 11 Books -->
+                    <div class="download-item grade11 bg-bb-light rounded-xl border border-purple-500 hover:border-bb-yellow transition-all card-hover">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-purple-400 mb-2 terminal-text">GRADE 11 CHEMISTRY</h3>
+                            <p class="text-gray-400 text-sm mb-4">Advanced chemistry concepts. Thermodynamics, kinetics, and equilibrium reactions.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-purple-500">PDF • 11.2 MB</span>
+                                <button onclick="downloadFile('grade11-chemistry.pdf')" class="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-600 transition-colors">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grade 12 Books -->
+                    <div class="download-item grade12 bg-bb-light rounded-xl border border-orange-500 hover:border-bb-yellow transition-all card-hover">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-orange-400 mb-2 terminal-text">GRADE 12 CHEMISTRY</h3>
+                            <p class="text-gray-400 text-sm mb-4">Pre-university chemistry. Advanced organic, electrochemistry, and analytical methods.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-orange-500">PDF • 14.7 MB</span>
+                                <button onclick="downloadFile('grade12-chemistry.pdf')" class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-orange-600 transition-colors">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- University Books -->
+                    <div class="download-item university bg-bb-light rounded-xl border border-indigo-500 hover:border-bb-yellow transition-all card-hover">
+                        <div class="p-6">
+                            <div class="w-16 h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-indigo-400 mb-2 terminal-text">UNIVERSITY CHEMISTRY</h3>
+                            <p class="text-gray-400 text-sm mb-4">Advanced university-level chemistry. Quantum mechanics, spectroscopy, and research methods.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500 bg-bb-gray px-2 py-1 rounded border border-indigo-500">PDF • 18.9 MB</span>
+                                <button onclick="downloadFile('university-chemistry.pdf')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-600 transition-colors">DOWNLOAD</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-bb-green', 'font-semibold');
+                link.classList.add('text-gray-300');
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Sidebar toggle for AI page
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+
+        // Enhanced Chat Functionality with Real AI Backend
+        const endpoint = "https://super-rain-efa3-production.junassraschidie.workers.dev/chat";
+        let chatHistory = [];
+        let isAIThinking = false;
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            const saved = localStorage.getItem('chemClass_chatHistory');
+            if (saved) {
+                try {
+                    chatHistory = JSON.parse(saved);
+                    // Restore chat messages in UI
+                    chatHistory.forEach(msg => {
+                        if (msg.role === 'user') {
+                            addUserMessage(msg.content, false);
+                        } else if (msg.role === 'assistant') {
+                            addAIMessage(msg.content);
+                        }
+                    });
+                } catch (error) {
+                    console.warn('Failed to load chat history:', error);
+                    chatHistory = [];
+                }
+            }
+        }
+
+        // Save chat history to localStorage
+        function saveChatHistory() {
+            try {
+                localStorage.setItem('chemClass_chatHistory', JSON.stringify(chatHistory));
+            } catch (error) {
+                console.warn('Failed to save chat history:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message || isAIThinking) return;
+
+            // Add user message to UI and history
+            addUserMessage(message);
+            chatHistory.push({ role: "user", content: message });
+            saveChatHistory();
+            input.value = '';
+            isAIThinking = true;
+
+            // Show typing indicator
+            const typingDiv = addTypingIndicator();
+
+            try {
+                console.log('Sending request to chemistry AI endpoint:', endpoint);
+                console.log('Request payload:', {
+                    history: chatHistory,
+                    system: "You are Ra⁸⁸shidi, an advanced AI chemistry consultant with a Breaking Bad-inspired personality. You are Mr. Rashidi's digital chemistry assistant for high school students. Respond with scientific accuracy while maintaining a dramatic, precise, and safety-focused tone. Emphasize the importance of precision, safety protocols, and respect for chemistry's power. Use chemistry terminology appropriately and reference periodic elements when relevant. Be educational but engaging, and always stress that chemistry demands absolute precision and safety."
+                });
+
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        history: chatHistory,
+                        system: "You are Ra⁸⁸shidi, an advanced AI chemistry consultant with a Breaking Bad-inspired personality. You are Mr. Rashidi's digital chemistry assistant for high school students. Respond with scientific accuracy while maintaining a dramatic, precise, and safety-focused tone. Emphasize the importance of precision, safety protocols, and respect for chemistry's power. Use chemistry terminology appropriately and reference periodic elements when relevant. Be educational but engaging, and always stress that chemistry demands absolute precision and safety."
+                    })
+                });
+
+                console.log('Response status:', response.status);
+
+                // Remove typing indicator
+                if (typingDiv.parentNode) {
+                    typingDiv.remove();
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Response data:', data);
+                    
+                    if (data.output) {
+                        const responseDiv = addAIMessage('');
+                        typeWriterEffect(responseDiv, data.output, 25);
+                        chatHistory.push({ role: "assistant", content: data.output });
+                        saveChatHistory();
+                    } else if (data.error) {
+                        addAIMessage("🔴 CHEMICAL ANALYSIS ERROR: " + data.error);
+                    } else {
+                        addAIMessage("🔴 NEURAL LINK ERROR: Received empty response from AI chemistry core");
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    addAIMessage("⚠️ LAB CONNECTION ERROR: HTTP " + response.status + " - Unable to connect to chemistry AI core.\n\n💡 Switching to local chemistry knowledge base...");
+                    
+                    // Fallback to local response after a delay
+                    setTimeout(() => {
+                        const fallbackResponse = generateLocalChemistryResponse(message);
+                        const responseDiv = addAIMessage('');
+                        typeWriterEffect(responseDiv, fallbackResponse, 25);
+                        chatHistory.push({ role: "assistant", content: fallbackResponse });
+                        saveChatHistory();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Network/Connection Error:', error);
+                
+                // Remove typing indicator
+                if (typingDiv.parentNode) {
+                    typingDiv.remove();
+                }
+                
+                // Show connection error with fallback
+                addAIMessage("🔴 CONNECTION ERROR: Unable to establish neural link with AI chemistry core.\n\nError: " + error.message + "\n\n💡 Activating local chemistry protocols...");
+                
+                // Fallback to local responses
+                setTimeout(() => {
+                    const fallbackResponse = generateLocalChemistryResponse(message);
+                    const responseDiv = addAIMessage('');
+                    typeWriterEffect(responseDiv, fallbackResponse, 25);
+                    chatHistory.push({ role: "assistant", content: fallbackResponse });
+                    saveChatHistory();
+                }, 1500);
+            } finally {
+                isAIThinking = false;
+            }
+
+            scrollChatToBottom();
+        }
+
+        function askQuestion(question) {
+            document.getElementById('chat-input').value = question;
+            sendMessage();
+        }
+
+        function addUserMessage(message, animate = true) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = animate ? 'flex justify-end fade-in' : 'flex justify-end';
+            messageDiv.innerHTML = `
+                <div class="bg-bb-green text-bb-dark rounded-lg p-4 max-w-3xl font-medium glow-green">
+                    <p>${message}</p>
+                    <div class="text-xs mt-1 opacity-70">[USER@TERMINAL]</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            if (animate) scrollChatToBottom();
+        }
+
+        function addAIMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start space-x-3 fade-in';
+            
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 bg-bb-green rounded-full flex items-center justify-center flex-shrink-0 glow-green">
+                    <span class="text-bb-dark font-bold text-xs">Ra</span>
+                </div>
+                <div class="bg-bb-light rounded-lg p-4 border border-bb-green max-w-3xl glow-green">
+                    <div class="text-gray-200 ai-response">${message}</div>
+                    <div class="text-xs mt-2 text-bb-green terminal-text opacity-70">[AI Ra⁸⁸SHIDI@CHEMISTRY_CORE]</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollChatToBottom();
+            return messageDiv.querySelector('.ai-response');
+        }
+
+        function addTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'flex items-start space-x-3 fade-in typing-indicator';
+            
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 bg-bb-green rounded-full flex items-center justify-center flex-shrink-0 glow-green">
+                    <span class="text-bb-dark font-bold text-xs">Ra</span>
+                </div>
+                <div class="bg-bb-light rounded-lg p-4 border border-bb-green max-w-3xl glow-green">
+                    <div class="text-gray-200">
+                        <span class="typing-dots">Analyzing chemical patterns</span>
+                        <span class="terminal-cursor">⚛️</span>
+                    </div>
+                    <div class="text-xs mt-2 text-bb-green terminal-text opacity-70">[NEURAL_PROCESSING...]</div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollChatToBottom();
+            return typingDiv;
+        }
+
+        function typeWriterEffect(element, text, speed = 30) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                    if (i % 50 === 0) scrollChatToBottom(); // Scroll periodically during typing
+                }
+            }
+            type();
+        }
+
+        function scrollChatToBottom() {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function generateLocalChemistryResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('periodic table')) {
+                return "⚛️ The periodic table is the holy grail of chemistry. Elements arranged by atomic number - the number of protons defining each element's identity. Each period represents electron shells, each group shares valence electron configurations. Remember: precision is everything. One miscalculation and your entire molecular structure collapses. Dmitri Mendeleev's legacy demands respect.";
+            } else if (message.includes('molecular') || message.includes('bond')) {
+                return "🔗 Molecular bonding - the fundamental force holding matter together. Ionic bonds: complete electron transfer, typically metal to nonmetal, creates charged ions. Covalent bonds: electron sharing between nonmetals, single/double/triple based on shared pairs. Metallic bonds: electron sea model, delocalized electrons. Bond strength determines melting point, boiling point, reactivity. Understanding this is the difference between success and catastrophic failure.";
+            } else if (message.includes('balance') && message.includes('equation')) {
+                return "⚖️ Chemical equation balancing - the mathematics of molecular reality. Law of conservation of mass: atoms cannot be created or destroyed in chemical reactions. Start with the most complex polyatomic ion, use whole number coefficients only, never alter subscripts. Count each element systematically. One unbalanced equation leads to incorrect stoichiometry, which leads to experimental failure. Precision is non-negotiable.";
+            } else if (message.includes('acid') || message.includes('base') || message.includes('dangerous')) {
+                return "⚠️ Acids and bases - respect their power. Arrhenius definition: acids release H⁺ ions, bases release OH⁻ ions. Brønsted-Lowry: acids donate protons, bases accept them. Strong acids (HCl, H₂SO₄, HNO₃) can cause severe chemical burns. Strong bases (NaOH, KOH) are equally dangerous. pH scale: below 7 acidic, above 7 basic. Never mix concentrated acids and bases without proper calculations - exothermic reactions can be explosive. Safety protocols are not suggestions.";
+            } else if (message.includes('mole') || message.includes('stoichiometry')) {
+                return "🧮 Stoichiometry - the quantitative backbone of chemistry. One mole equals Avogadro's number: 6.022 × 10²³ particles. Use balanced chemical equations to determine mole ratios between reactants and products. Convert mass to moles using molar mass, apply stoichiometric ratios, convert back to desired units. Every calculation must be precise - in professional chemistry, impure products mean failed synthesis, lost time, and wasted resources.";
+            } else if (message.includes('electron') || message.includes('orbital')) {
+                return "🌪️ Electron configuration - the quantum mechanical foundation of chemical behavior. Electrons occupy orbitals: s, p, d, f subshells with specific energy levels. Aufbau principle: fill lowest energy first. Pauli exclusion: maximum two electrons per orbital with opposite spins. Hund's rule: half-fill degenerate orbitals before pairing. Valence electrons determine chemical properties and bonding behavior. Master this, and you control the molecular world.";
+            } else {
+                return "⚗️ Chemistry is not a game. Every reaction, every calculation, every procedure must be executed with absolute precision. The molecular world operates under immutable laws - thermodynamics, kinetics, quantum mechanics. What specific aspect of chemistry requires clarification? Molecular structure? Reaction mechanisms? Thermodynamics? Phase transitions? Be precise with your inquiry, and I will provide the knowledge you need to master the elements.";
+            }
+        }
+
+        function clearChat() {
+            chatHistory = []; // Clear the conversation history
+            localStorage.removeItem('chemClass_chatHistory'); // Clear saved history
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = `
+                <div class="flex items-start space-x-3 fade-in">
+                    <div class="w-8 h-8 bg-bb-green rounded-full flex items-center justify-center flex-shrink-0 glow-green neural-pulse">
+                        <span class="text-bb-dark font-bold text-xs">Ra</span>
+                    </div>
+                    <div class="bg-bb-light rounded-lg p-4 border border-bb-green max-w-3xl glow-green">
+                        <p class="text-gray-200">I am Ra⁸⁸shidi. Your advanced AI chemistry consultant powered by neural networks.</p>
+                        <ul class="mt-2 text-gray-400 text-sm space-y-1">
+                            <li>• Chemical equations and molecular balance</li>
+                            <li>• Periodic elements and atomic structure</li>
+                            <li>• Molecular bonding and compound formation</li>
+                            <li>• Acid-base reactions and pH calculations</li>
+                            <li>• Stoichiometry and molar mass calculations</li>
+                            <li>• Safety protocols and lab procedures</li>
+                        </ul>
+                        <p class="mt-3 text-bb-green terminal-text">🧪 Neural link established. What chemistry knowledge do you seek?</p>
+                        <div class="text-xs mt-2 text-bb-green terminal-text opacity-70">[AI Ra⁸⁸SHIDI@CHEMISTRY_CORE]</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Downloads functionality
+        function filterDownloads(category) {
+            const items = document.querySelectorAll('.download-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update button styles
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-bb-green', 'text-bb-dark');
+                btn.classList.add('bg-bb-gray', 'text-gray-400');
+            });
+            event.target.classList.remove('bg-bb-gray', 'text-gray-400');
+            event.target.classList.add('bg-bb-green', 'text-bb-dark');
+            
+            // Filter items
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function downloadFile(filename) {
+            // Map book titles to GitHub PDF files
+            const bookMappings = {
+                'chemistry-textbook.pdf': 'GENERAL-CHEMISTRY.pdf',
+                'organic-chemistry.pdf': 'ORGANIC-COMPOUNDS.pdf',
+                'lab-safety.pdf': 'SAFETY-PROTOCOLS.pdf',
+                'lab-experiments.pdf': 'LAB-PROCEDURES.pdf',
+                'periodic-table.pdf': 'PERIODIC-TABLE.pdf',
+                'formulas.pdf': 'FORMULA-DATABASE.pdf',
+                'practice-problems.pdf': 'PRACTICE-PROBLEMS.pdf',
+                'homework-templates.pdf': 'ASSIGNMENT-TEMPLATES.pdf',
+                'grade10-chemistry.pdf': 'GRADE-10-CHEMISTRY.pdf',
+                'grade11-chemistry.pdf': 'GRADE-11-CHEMISTRY.pdf',
+                'grade12-chemistry.pdf': 'GRADE-12-CHEMISTRY.pdf',
+                'university-chemistry.pdf': 'UNIVERSITY-CHEMISTRY.pdf'
+            };
+
+            // Get the corresponding GitHub PDF filename
+            const githubFilename = bookMappings[filename] || filename;
+            
+            // Create download link to GitHub repository
+            const githubBaseUrl = 'https://raw.githubusercontent.com/jonasraschidie/jonasraschidie.github.io/main/';
+            const downloadUrl = githubBaseUrl + githubFilename;
+            
+            // Create and trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = githubFilename;
+            link.target = '_blank'; // Open in new tab as fallback
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show download notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>DOWNLOADING: ${githubFilename}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Login functionality with separate authentication functions
+        let hasAIAccess = false;
+        let hasDownloadsAccess = false;
+        let pendingPage = null;
+
+        // Separate authentication function for AI page
+        function authenticateAI(username, password) {
+            return username === 'rashidi' && password === 'heisenberg99';
+        }
+
+        // Separate authentication function for Downloads page
+        function authenticateDownloads(username, password) {
+            return username === 'student' && password === 'chemistry123';
+        }
+
+        function handleAILogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            console.log('Attempting AI login with username:', username);
+
+            if (authenticateAI(username, password)) {
+                hasAIAccess = true;
+                hasDownloadsAccess = false; // Ensure downloads access is cleared
+                errorDiv.classList.add('hidden');
+                
+                // Show logout button
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('mobile-logout-btn').classList.remove('hidden');
+                
+                console.log('AI access granted');
+                showLoginSuccess('AI_ACCESS');
+            } else {
+                errorDiv.textContent = 'AI ASSISTANT: Invalid teacher credentials required';
+                errorDiv.classList.remove('hidden');
+                console.log('AI access denied');
+            }
+        }
+
+        function handleDownloadsLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            console.log('Attempting Downloads login with username:', username);
+
+            if (authenticateDownloads(username, password)) {
+                hasDownloadsAccess = true;
+                hasAIAccess = false; // Ensure AI access is cleared
+                errorDiv.classList.add('hidden');
+                
+                // Show logout button
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('mobile-logout-btn').classList.remove('hidden');
+                
+                console.log('Downloads access granted');
+                showLoginSuccess('DOWNLOADS_ACCESS');
+            } else {
+                errorDiv.textContent = 'DOWNLOADS: Invalid student credentials required';
+                errorDiv.classList.remove('hidden');
+                console.log('Downloads access denied');
+            }
+        }
+
+        function showLoginSuccess(accessType) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-bb-green text-bb-dark px-6 py-3 rounded-lg shadow-lg z-50 glow-green font-bold';
+            
+            let message = '';
+            if (accessType === 'AI_ACCESS') {
+                message = 'AI NEURAL LINK ESTABLISHED - WELCOME RASHIDI';
+            } else if (accessType === 'DOWNLOADS_ACCESS') {
+                message = 'DOWNLOADS ACCESS GRANTED - WELCOME STUDENT';
+            } else {
+                message = 'ACCESS GRANTED - WELCOME TO THE LAB';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+                // Redirect based on pending page or access type
+                if (pendingPage) {
+                    showPage(pendingPage);
+                    pendingPage = null;
+                } else if (accessType === 'AI_ACCESS') {
+                    showPage('ai');
+                } else if (accessType === 'DOWNLOADS_ACCESS') {
+                    showPage('downloads');
+                } else {
+                    showPage('home');
+                }
+            }, 2000);
+        }
+
+        function checkLoginAndNavigate(page) {
+            console.log('Checking login for page:', page);
+            console.log('Current auth state - AI Access:', hasAIAccess, 'Downloads Access:', hasDownloadsAccess);
+            
+            if (page === 'ai' && !hasAIAccess) {
+                pendingPage = page;
+                setupLoginFormForAI();
+                showPage('login');
+                return;
+            }
+            
+            if (page === 'downloads' && !hasDownloadsAccess) {
+                pendingPage = page;
+                setupLoginFormForDownloads();
+                showPage('login');
+                return;
+            }
+            
+            showPage(page);
+        }
+
+        function setupLoginFormForAI() {
+            const form = document.querySelector('form[onsubmit*="handleLogin"], form[onsubmit*="handleDownloadsLogin"]');
+            form.setAttribute('onsubmit', 'handleAILogin(event)');
+            
+            const title = document.querySelector('.login-title');
+            title.textContent = 'AI ASSISTANT ACCESS';
+            
+            const subtitle = document.querySelector('.login-subtitle');
+            subtitle.textContent = 'Teacher credentials required for AI Neural Link';
+            
+            // Clear any previous error messages
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('login-error').textContent = '';
+        }
+
+        function setupLoginFormForDownloads() {
+            const form = document.querySelector('form[onsubmit*="handleLogin"], form[onsubmit*="handleAILogin"]');
+            form.setAttribute('onsubmit', 'handleDownloadsLogin(event)');
+            
+            const title = document.querySelector('.login-title');
+            title.textContent = 'DOWNLOADS ACCESS';
+            
+            const subtitle = document.querySelector('.login-subtitle');
+            subtitle.textContent = 'Student credentials required for file access';
+            
+            // Clear any previous error messages
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('login-error').textContent = '';
+        }
+
+        function showAccessDeniedMessage(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <div class="font-bold">ACCESS DENIED</div>
+                        <div class="text-sm opacity-90">${message}</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        function logoutAI() {
+            hasAIAccess = false;
+            // Keep Downloads access if it exists
+            pendingPage = null;
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('mobile-logout-btn').classList.add('hidden');
+            
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            
+            showPage('home');
+            
+            // Show logout notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>AI NEURAL LINK DISCONNECTED</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function logoutDownloads() {
+            hasDownloadsAccess = false;
+            // Keep AI access if it exists
+            pendingPage = null;
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('mobile-logout-btn').classList.add('hidden');
+            
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            
+            showPage('home');
+            
+            // Show logout notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>DOWNLOADS ACCESS TERMINATED</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function logoutAll() {
+            hasAIAccess = false;
+            hasDownloadsAccess = false;
+            pendingPage = null;
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('mobile-logout-btn').classList.add('hidden');
+            
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            
+            showPage('home');
+            
+            // Show logout notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-bold';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>ALL SESSIONS TERMINATED</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home');
+            
+            // Load chat history when AI page is accessed
+            const originalShowPage = showPage;
+            showPage = function(pageId) {
+                originalShowPage(pageId);
+                if (pageId === 'ai') {
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        loadChatHistory();
+                        // If no history, show welcome message
+                        if (chatHistory.length === 0) {
+                            clearChat();
+                        }
+                    }, 100);
+                }
+            };
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979651ccd4c53b64',t:'MTc1NjkxMzc1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
